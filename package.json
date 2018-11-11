@@ -1,0 +1,31 @@
+{
+  "name": "sudoku",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sudoku game",
+  "license": "UNLICENSED",
+  "engines": {
+    "npm": "^6.4.0"
+  },
+  "homepage": "https://github.com/wenceslauslee/sudoku",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wenceslauslee/sudoku.git"
+  },
+  "dependencies": {
+    "underscore": "1.8.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "style": "npm run style:js",
+    "style:js": "eslint src test"
+  }
+}
