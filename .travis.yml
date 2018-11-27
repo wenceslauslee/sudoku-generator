@@ -1,1 +1,10 @@
 language: node_js
+script:
+  - npm test
+  - npm run style
+notifications:
+  email:
+    recipients:
+     - wenceslauslee@gmail.com
+    on_success: <change>  # default: change
+    on_failure: <always>  # default: always
