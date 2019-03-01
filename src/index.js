@@ -1,11 +1,4 @@
-var _ = require('underscore');
+const generator = require('./generator');
 
-function doSomething () {
-  var somethingRandom = _.range(10);
-
-  return somethingRandom;
-};
-
-module.exports = {
-  doSomething: doSomething
-};
+const puzzle = generator.generate();
+console.log(puzzle);
