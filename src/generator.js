@@ -1,7 +1,7 @@
 const _ = require('underscore');
+const constants = require('./constants');
 
 var count = 0;
-const size = 9;
 
 function generate(numberOfPuzzles) {
   const start = new Date();
@@ -14,19 +14,19 @@ function generate(numberOfPuzzles) {
 }
 
 function generateInner(row, column, state) {
-  if (row === size) {
+  if (row === constants.size) {
     count++;
     console.log(`Puzzle #${count} created.`);
     return;
   }
 
   const numbers = _.shuffle(_.range(9));
-  for (var i = 0; i < size; i++) {
+  for (var i = 0; i < constants.size; i++) {
     if (isValid(numbers[i], state, row, column)) {
       setState(numbers[i], state, row, column);
       var nextRow = row;
       var nextColumn = column + 1;
-      if (nextColumn === size) {
+      if (nextColumn === constants.size) {
         nextRow = row + 1;
         nextColumn = 0;
       }
@@ -49,7 +49,7 @@ function initializeState() {
 
 function initializeDimension() {
   const array = [];
-  for (var i = 0; i < size; i++) {
+  for (var i = 0; i < constants.size; i++) {
     array.push(generateEmptyArray());
   }
 
@@ -58,7 +58,7 @@ function initializeDimension() {
 
 function generateEmptyArray() {
   const array = [];
-  for (var i = 0; i < size; i++) {
+  for (var i = 0; i < constants.size; i++) {
     array.push(null);
   }
 
@@ -94,13 +94,13 @@ function convertToMiniGrid(row, column) {
 function convertState(state) {
   const puzzle = [];
   const scramble = _.shuffle(_.range(1, 10));
-  for (var i = 0; i < size; i++) {
+  for (var i = 0; i < constants.size; i++) {
     const array = [];
-    for (var j = 0; j < size; j++) {
+    for (var j = 0; j < constants.size; j++) {
       array.push(null);
     }
     const input = state.rows[i];
-    for (var k = 0; k < size; k++) {
+    for (var k = 0; k < constants.size; k++) {
       array[input[k]] = scramble[k];
     }
 
