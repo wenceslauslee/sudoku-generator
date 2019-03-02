@@ -1,5 +1,6 @@
 const _ = require('underscore');
 const constants = require('./constants');
+const utils = require('./utils');
 
 var count = 0;
 
@@ -68,27 +69,19 @@ function generateEmptyArray() {
 function isValid(number, state, row, column) {
   return state.rows[row][number] == null &&
     state.columns[column][number] == null &&
-    state.grids[convertToGrid(row, column)][number] == null;
+    state.grids[utils.convertToGrid(row, column)][number] == null;
 }
 
 function setState(number, state, row, column) {
   state.rows[row][number] = column;
   state.columns[column][number] = row;
-  state.grids[convertToGrid(row, column)][number] = convertToMiniGrid(row, column);
+  state.grids[utils.convertToGrid(row, column)][number] = utils.convertToGridInner(row, column);
 }
 
 function unsetState(number, state, row, column) {
   state.rows[row][number] = null;
   state.columns[column][number] = null;
-  state.grids[convertToGrid(row, column)][number] = null;
-}
-
-function convertToGrid(row, column) {
-  return Math.floor(row / 3) * 3 + Math.floor(column / 3);
-}
-
-function convertToMiniGrid(row, column) {
-  return (row % 3) * 3 + (column % 3);
+  state.grids[utils.convertToGrid(row, column)][number] = null;
 }
 
 function convertState(state) {

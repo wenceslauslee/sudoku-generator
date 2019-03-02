@@ -1,16 +1,41 @@
 const _ = require('underscore');
 const constants = require('./constants');
+const fullHouse = require('./full-house');
+const utils = require('./utils');
 
 function solve(puzzle) {
-  convert(puzzle);
-  fullHouse(puzzle);
+  const start = new Date();
+  const clues = convert(puzzle);
+  const operations = {
+    fullHouse: 0
+  };
+  const trail = [];
+
+  var oldCount = clues.count + 1;
+  while (clues.count !== 0 && clues.count !== oldCount) {
+    oldCount = clues.count;
+    cycleThroughStrategies(puzzle, clues, operations, trail);
+    console.log(operations);
+    console.log(trail);
+  }
+
+  const end = new Date() - start;
+
+  if (clues.count !== 0) {
+    console.log(`Stuck solving. Time elapsed: ${end}ms`);
+  } else {
+    console.log(`Done solving. Time elapsed: ${end}ms`);
+  }
 }
 
-function fullHouse(puzzle) {
+function cycleThroughStrategies(puzzle, clues, operations, trail) {
+  // const currentCount = clues.count;
+
+  fullHouse.solve(puzzle, clues, operations, trail);
 }
 
 function convert(puzzle) {
-  const board = {
+  const possible = {
     rows: [],
     columns: [],
     grids: []
@@ -24,7 +49,7 @@ function convert(puzzle) {
         set.delete(row[j1]);
       }
     }
-    board.rows.push(set);
+    possible.rows.push(set);
   }
 
   for (var i2 = 0; i2 < constants.size; i2++) {
@@ -34,7 +59,7 @@ function convert(puzzle) {
         set.delete(puzzle[j2][i2]);
       }
     }
-    board.columns.push(set);
+    possible.columns.push(set);
   }
 
   for (var i3 = 0; i3 < constants.size; i3++) {
@@ -50,11 +75,41 @@ function convert(puzzle) {
         }
       }
     }
-    board.grids.push(set);
+    possible.grids.push(set);
   }
 
-  console.log(board);
-  return board;
+  const remaining = [];
+  var count = 0;
+
+  for (var r = 0; r < constants.size; r++) {
+    const row = [];
+    for (var c = 0; c < constants.size; c++) {
+      if (puzzle[r][c] !== null) {
+        row.push(null);
+      } else {
+        count = count + 1;
+        row.push(intersect(possible.rows[r], possible.columns[c], possible.grids[utils.convertToGrid(r, c)]));
+      }
+    }
+    remaining.push(row);
+  }
+
+  return {
+    possible: possible,
+    remaining: remaining,
+    count: count
+  };
+}
+
+function intersect(set1, set2, set3) {
+  const array = [];
+  for (let item of set1) {
+    if (set2.has(item) && set3.has(item)) {
+      array.push(item);
+    }
+  }
+
+  return new Set(array);
 }
 
 module.exports = {
