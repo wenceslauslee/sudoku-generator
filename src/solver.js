@@ -1,13 +1,18 @@
 const _ = require('underscore');
 const constants = require('./constants');
 const fullHouse = require('./full-house');
+const hiddenSingle = require('./hidden-single');
+const nakedSingle = require('./naked-single');
+const util = require('util');
 const utils = require('./utils');
 
 function solve(puzzle) {
   const start = new Date();
   const clues = convert(puzzle);
   const operations = {
-    fullHouse: 0
+    fullHouse: 0,
+    nakedSingle: 0,
+    hiddenSingle: 0
   };
   const trail = [];
 
@@ -15,23 +20,35 @@ function solve(puzzle) {
   while (clues.count !== 0 && clues.count !== oldCount) {
     oldCount = clues.count;
     cycleThroughStrategies(puzzle, clues, operations, trail);
-    console.log(operations);
-    console.log(trail);
   }
 
   const end = new Date() - start;
 
   if (clues.count !== 0) {
     console.log(`Stuck solving. Time elapsed: ${end}ms`);
+    console.log(operations);
+    console.log(trail);
+    console.log(util.inspect(clues, { showHidden: false, depth: null }));
   } else {
     console.log(`Done solving. Time elapsed: ${end}ms`);
+    console.log(operations);
   }
 }
 
 function cycleThroughStrategies(puzzle, clues, operations, trail) {
-  // const currentCount = clues.count;
+  const currentCount = clues.count;
 
   fullHouse.solve(puzzle, clues, operations, trail);
+  if (clues.count !== currentCount) {
+    return;
+  }
+
+  nakedSingle.solve(puzzle, clues, operations, trail);
+  if (clues.count !== currentCount) {
+    return;
+  }
+
+  hiddenSingle.solve(puzzle, clues, operations, trail);
 }
 
 function convert(puzzle) {

@@ -3,14 +3,13 @@ const manipulator = require('./manipulator');
 const solver = require('./solver');
 
 const puzzle = generator.generate();
-print(puzzle);
 
 const record = {
   set: new Set(),
   list: [],
   answer: []
 };
-for (var i = 0; i < 20; i++) {
+for (var i = 0; i < 50; i++) {
   manipulator.remove(puzzle, record);
 }
 print(puzzle);
