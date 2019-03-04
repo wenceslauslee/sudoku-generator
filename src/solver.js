@@ -3,11 +3,17 @@ const constants = require('./constants');
 const fullHouse = require('./full-house');
 const hiddenSingle = require('./hidden-single');
 const nakedSingle = require('./naked-single');
-const util = require('util');
+// const util = require('util');
 const utils = require('./utils');
 
-function solve(puzzle) {
-  const start = new Date();
+const STRATEGIES = [
+  fullHouse,
+  nakedSingle,
+  hiddenSingle
+];
+
+function solve(puzzle, level) {
+  // const start = new Date();
   const clues = convert(puzzle);
   const operations = {
     fullHouse: 0,
@@ -19,36 +25,30 @@ function solve(puzzle) {
   var oldCount = clues.count + 1;
   while (clues.count !== 0 && clues.count !== oldCount) {
     oldCount = clues.count;
-    cycleThroughStrategies(puzzle, clues, operations, trail);
+    cycleThroughStrategies(puzzle, clues, operations, trail, level);
   }
 
-  const end = new Date() - start;
+  // const end = new Date() - start;
 
   if (clues.count !== 0) {
-    console.log(`Stuck solving. Time elapsed: ${end}ms`);
-    console.log(operations);
-    console.log(trail);
-    console.log(util.inspect(clues, { showHidden: false, depth: null }));
+    // console.log(`Stuck solving. Time elapsed: ${end}ms`);
+    // console.log(util.inspect(clues, { showHidden: false, depth: null }));
+    return false;
   } else {
-    console.log(`Done solving. Time elapsed: ${end}ms`);
-    console.log(operations);
+    // console.log(`Done solving. Time elapsed: ${end}ms`);
+    return true;
   }
 }
 
-function cycleThroughStrategies(puzzle, clues, operations, trail) {
+function cycleThroughStrategies(puzzle, clues, operations, trail, level) {
   const currentCount = clues.count;
 
-  fullHouse.solve(puzzle, clues, operations, trail);
-  if (clues.count !== currentCount) {
-    return;
+  for (var i = 0; i < level; i++) {
+    STRATEGIES[i].solve(puzzle, clues, operations, trail);
+    if (clues.count !== currentCount) {
+      break;
+    }
   }
-
-  nakedSingle.solve(puzzle, clues, operations, trail);
-  if (clues.count !== currentCount) {
-    return;
-  }
-
-  hiddenSingle.solve(puzzle, clues, operations, trail);
 }
 
 function convert(puzzle) {

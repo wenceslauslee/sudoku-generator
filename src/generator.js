@@ -2,22 +2,19 @@ const _ = require('underscore');
 const constants = require('./constants');
 const utils = require('./utils');
 
-var count = 0;
-
-function generate(numberOfPuzzles) {
-  const start = new Date();
+function generate() {
+  // const start = new Date();
   const state = initializeState();
   generateInner(0, 0, state);
-  const end = new Date() - start;
-  console.log(`Done. ${count} puzzles created. Time elapsed: ${end}ms`);
+  // const end = new Date() - start;
+  // console.log(`Done. ${count} puzzles created. Time elapsed: ${end}ms`);
 
   return convertState(state);
 }
 
 function generateInner(row, column, state) {
   if (row === constants.size) {
-    count++;
-    console.log(`Puzzle #${count} created.`);
+    state.end = true;
     return;
   }
 
@@ -32,7 +29,7 @@ function generateInner(row, column, state) {
         nextColumn = 0;
       }
       generateInner(nextRow, nextColumn, state);
-      if (count === 1) {
+      if (state.end) {
         return;
       }
       unsetState(numbers[i], state, row, column);
@@ -44,7 +41,8 @@ function initializeState() {
   return {
     rows: initializeDimension(),
     columns: initializeDimension(),
-    grids: initializeDimension()
+    grids: initializeDimension(),
+    end: false
   };
 }
 
