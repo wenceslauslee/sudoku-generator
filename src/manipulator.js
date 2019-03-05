@@ -1,5 +1,6 @@
 const _ = require('underscore');
 const constants = require('./constants');
+const scorer = require('./scorer');
 const solver = require('./solver');
 
 function remove(puzzle, gridsToRemove, level) {
@@ -17,7 +18,10 @@ function remove(puzzle, gridsToRemove, level) {
     removeInner(puzzleTemp, level, metadata, original);
 
     if (metadata.puzzle) {
-      return metadata.puzzle;
+      return {
+        puzzle: metadata.puzzle,
+        operations: metadata.operations
+      };
     }
   }
 }
@@ -37,10 +41,17 @@ function removeInner(puzzle, level, metadata, original) {
     var value = getRandomValue(metadata.list);
     puzzle[value.y][value.x] = null;
     const cloned = clone(puzzle);
-    const found = solver.solve(cloned, level);
-    if (found) {
+    const result = solver.solve(cloned, level);
+    if (result.success) {
       metadata.grids += 1;
-      removeInner(puzzle, level, metadata, original);
+      metadata.operations = result.operations;
+
+      // Validate puzzle to make sure it adheres to difficulty
+      if (metadata.grids === metadata.gridsToRemove && !scorer.validate(result.operations, level)) {
+        metadata.failCount += 1;
+      } else {
+        removeInner(puzzle, level, metadata, original);
+      }
     } else {
       metadata.failCount += 1;
     }

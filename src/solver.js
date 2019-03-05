@@ -13,7 +13,6 @@ const STRATEGIES = [
 ];
 
 function solve(puzzle, level) {
-  // const start = new Date();
   const clues = convert(puzzle);
   const operations = {
     fullHouse: 0,
@@ -28,15 +27,10 @@ function solve(puzzle, level) {
     cycleThroughStrategies(puzzle, clues, operations, trail, level);
   }
 
-  // const end = new Date() - start;
-
-  if (clues.count !== 0) {
-    // console.log(`Stuck solving. Time elapsed: ${end}ms`);
-    // console.log(util.inspect(clues, { showHidden: false, depth: null }));
-    return false;
-  } else {
-    // console.log(`Done solving. Time elapsed: ${end}ms`);
-    return true;
+  return {
+    operations: operations,
+    trail: trail,
+    success: clues.count === 0
   }
 }
 
