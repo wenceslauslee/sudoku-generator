@@ -12,14 +12,16 @@ const levels = {
     grids: 41,
     intelligence: 3,
     filename: '/Users/wences/Desktop/sudoku/output/easy.txt'
+  },
+  three: {
+    grids: 51,
+    intelligence: 4,
+    filename: '/Users/wences/Desktop/sudoku/output/medium.txt'
   }
-}
-
-// 35, 2 for simple easy
-// 40, 3 for easy
+};
 
 var totalPuzzles = 1;
-var level = levels.two;
+var level = levels[process.argv[2]];
 while (totalPuzzles <= 50) {
   const puzzle = generator.generate();
 

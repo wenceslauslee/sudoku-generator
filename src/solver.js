@@ -2,6 +2,7 @@ const _ = require('underscore');
 const constants = require('./constants');
 const fullHouse = require('./full-house');
 const hiddenSingle = require('./hidden-single');
+const lockedCandidate1 = require('./locked-candidate-1');
 const nakedSingle = require('./naked-single');
 // const util = require('util');
 const utils = require('./utils');
@@ -9,7 +10,8 @@ const utils = require('./utils');
 const STRATEGIES = [
   fullHouse,
   nakedSingle,
-  hiddenSingle
+  hiddenSingle,
+  lockedCandidate1
 ];
 
 function solve(puzzle, level) {
@@ -17,7 +19,8 @@ function solve(puzzle, level) {
   const operations = {
     fullHouse: 0,
     nakedSingle: 0,
-    hiddenSingle: 0
+    hiddenSingle: 0,
+    lockedCandidate1: 0
   };
   const trail = [];
 
@@ -31,7 +34,7 @@ function solve(puzzle, level) {
     operations: operations,
     trail: trail,
     success: clues.count === 0
-  }
+  };
 }
 
 function cycleThroughStrategies(puzzle, clues, operations, trail, level) {

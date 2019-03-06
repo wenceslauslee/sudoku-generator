@@ -50,10 +50,37 @@ function update(puzzle, clues, row, column, answer) {
   clues.count = clues.count - 1;
 }
 
+function updatePossible(clues, row, column, grid, answer) {
+  const remaining = clues.remaining;
+
+  if (row !== null) {
+    const colStart = getStartingColumn(grid);
+    const colEnd = colStart + 2;
+
+    for (var i = 0; i < constants.size; i++) {
+      if (remaining[row][i] !== null && (i < colStart || i > colEnd)) {
+        remaining[row][i].delete(answer);
+      }
+    }
+  }
+
+  if (column !== null) {
+    const rowStart = getStartingRow(grid);
+    const rowEnd = rowStart + 2;
+
+    for (var j = 0; j < constants.size; j++) {
+      if (remaining[j][column] !== null && (j < rowStart || j > rowEnd)) {
+        remaining[j][column].delete(answer);
+      }
+    }
+  }
+}
+
 module.exports = {
   convertToGrid: convertToGrid,
   convertToGridInner: convertToGridInner,
   getStartingRow: getStartingRow,
   getStartingColumn: getStartingColumn,
-  update: update
+  update: update,
+  updatePossible: updatePossible
 };
