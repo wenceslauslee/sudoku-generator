@@ -50,9 +50,7 @@ function update(puzzle, clues, row, column, answer) {
   clues.count = clues.count - 1;
 }
 
-function updatePossible(clues, row, column, grid, answer) {
-  const remaining = clues.remaining;
-
+function updatePossibleRowColumn(remaining, row, column, grid, answer) {
   if (row !== null) {
     const colStart = getStartingColumn(grid);
     const colEnd = colStart + 2;
@@ -76,11 +74,25 @@ function updatePossible(clues, row, column, grid, answer) {
   }
 }
 
+function updatePossibleGrid(remaining, row, column, grid, answer) {
+  const startingRow = getStartingRow(grid);
+  const startingCol = getStartingColumn(grid);
+  for (var i = startingRow; i < startingRow + 3; i++) {
+    for (var j = startingCol; j < startingCol + 3; j++) {
+      if (remaining[i][j] === null || i === row || j === column || !remaining[i][j].has(answer)) {
+        continue;
+      }
+      remaining[i][j].delete(answer);
+    }
+  }
+}
+
 module.exports = {
   convertToGrid: convertToGrid,
   convertToGridInner: convertToGridInner,
   getStartingRow: getStartingRow,
   getStartingColumn: getStartingColumn,
   update: update,
-  updatePossible: updatePossible
+  updatePossibleRowColumn: updatePossibleRowColumn,
+  updatePossibleGrid: updatePossibleGrid
 };

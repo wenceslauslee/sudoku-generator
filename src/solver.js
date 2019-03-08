@@ -2,7 +2,7 @@ const _ = require('underscore');
 const constants = require('./constants');
 const fullHouse = require('./full-house');
 const hiddenSingle = require('./hidden-single');
-const lockedCandidate1 = require('./locked-candidate-1');
+const lockedCandidate = require('./locked-candidate');
 const nakedSingle = require('./naked-single');
 // const util = require('util');
 const utils = require('./utils');
@@ -11,7 +11,7 @@ const STRATEGIES = [
   fullHouse,
   nakedSingle,
   hiddenSingle,
-  lockedCandidate1
+  lockedCandidate
 ];
 
 function solve(puzzle, level) {
@@ -20,13 +20,16 @@ function solve(puzzle, level) {
     fullHouse: 0,
     nakedSingle: 0,
     hiddenSingle: 0,
-    lockedCandidate1: 0
+    lockedCandidate: 0,
+    lockedCandidateSet: new Set()
   };
   const trail = [];
 
   var oldCount = clues.count + 1;
-  while (clues.count !== 0 && clues.count !== oldCount) {
+  var oldPseudoCount = clues.pseudoCount;
+  while ((clues.count !== 0 && clues.count !== oldCount) || clues.pseudoCount !== oldPseudoCount) {
     oldCount = clues.count;
+    oldPseudoCount = clues.pseudoCount;
     cycleThroughStrategies(puzzle, clues, operations, trail, level);
   }
 
@@ -111,7 +114,8 @@ function convert(puzzle) {
   return {
     possible: possible,
     remaining: remaining,
-    count: count
+    count: count,
+    pseudoCount: 0
   };
 }
 

@@ -6,22 +6,30 @@ const levels = {
   one: {
     grids: 33,
     intelligence: 2,
-    filename: '/Users/wences/Desktop/sudoku/output/simple.txt'
+    filename: 'simple.txt'
   },
   two: {
     grids: 41,
     intelligence: 3,
-    filename: '/Users/wences/Desktop/sudoku/output/easy.txt'
+    filename: 'easy.txt'
   },
   three: {
     grids: 51,
     intelligence: 4,
-    filename: '/Users/wences/Desktop/sudoku/output/medium.txt'
+    filename: 'medium.txt'
   }
 };
+const folder = 'output';
 
 var totalPuzzles = 1;
 var level = levels[process.argv[2]];
+if (!fs.existsSync(folder)) {
+  fs.mkdirSync(folder);
+}
+const filename = `${folder}/${level.filename}`;
+if (!fs.existsSync(filename)) {
+  fs.openSync(filename, 'w');
+}
 while (totalPuzzles <= 50) {
   const puzzle = generator.generate();
 
@@ -29,9 +37,8 @@ while (totalPuzzles <= 50) {
 
   if (result) {
     console.log(`Found puzzle #${totalPuzzles}.`);
-    console.log(result.operations);
     totalPuzzles++;
-    printToFile(result.puzzle, level.filename);
+    printToFile(result.puzzle, filename);
   } else {
     console.log(`Failed puzzle attempt #${totalPuzzles}.`);
   }

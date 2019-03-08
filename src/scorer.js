@@ -5,7 +5,7 @@ function validate(operations, level) {
     return operations.hiddenSingle > 10 &&
       operations.nakedSingle > 20;
   } else if (level === 4) {
-    return operations.lockedCandidate1 >= 1;
+    return operations.lockedCandidate >= 5;
   }
 
   return false;
