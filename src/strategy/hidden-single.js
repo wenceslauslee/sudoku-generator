@@ -1,5 +1,5 @@
-const constants = require('./constants');
-const utils = require('./utils');
+const constants = require('../constants');
+const utils = require('../utils');
 
 function solve(puzzle, clues, operations, trail) {
   const possible = clues.possible;

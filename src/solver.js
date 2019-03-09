@@ -1,9 +1,10 @@
 const _ = require('underscore');
 const constants = require('./constants');
-const fullHouse = require('./full-house');
-const hiddenSingle = require('./hidden-single');
-const lockedCandidate = require('./locked-candidate');
-const nakedSingle = require('./naked-single');
+const double = require('./strategy/double');
+const fullHouse = require('./strategy/full-house');
+const hiddenSingle = require('./strategy/hidden-single');
+const lockedCandidate = require('./strategy/locked-candidate');
+const nakedSingle = require('./strategy/naked-single');
 // const util = require('util');
 const utils = require('./utils');
 
@@ -11,7 +12,8 @@ const STRATEGIES = [
   fullHouse,
   nakedSingle,
   hiddenSingle,
-  lockedCandidate
+  lockedCandidate,
+  double
 ];
 
 function solve(puzzle, level) {
