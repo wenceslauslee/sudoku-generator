@@ -16,6 +16,7 @@ function getStartingColumn(grid) {
   return Math.floor(grid % 3) * 3;
 }
 
+// Updates a puzzle box with the right answer and rest of board accordingly
 function update(puzzle, clues, row, column, answer) {
   puzzle[row][column] = answer;
 
@@ -50,7 +51,8 @@ function update(puzzle, clues, row, column, answer) {
   clues.count = clues.count - 1;
 }
 
-function updatePossibleRowColumn(remaining, row, column, grid, answer) {
+// Removes invalid answer from remaining in row/column outside specific grid
+function removePossibleRowColumnInGrid(remaining, row, column, grid, answer) {
   if (row !== null) {
     const colStart = getStartingColumn(grid);
     const colEnd = colStart + 2;
@@ -74,7 +76,8 @@ function updatePossibleRowColumn(remaining, row, column, grid, answer) {
   }
 }
 
-function updatePossibleGrid(remaining, row, column, grid, answer) {
+// Removes invalid answer from remaining in grid outside specific row/column
+function removePossibleGridInRowColumn(remaining, row, column, grid, answer) {
   const startingRow = getStartingRow(grid);
   const startingCol = getStartingColumn(grid);
   for (var i = startingRow; i < startingRow + 3; i++) {
@@ -87,12 +90,23 @@ function updatePossibleGrid(remaining, row, column, grid, answer) {
   }
 }
 
+// Removes invalid answer from remaining in row/column/grid
+function removePossibleRowColumnGrid(remaining, answerKeys) {
+  const set = new Set(answerKeys);
+  for (var r in remaining) {
+    if (!set.has(r)) {
+      remaining.delete(r);
+    }
+  }
+}
+
 module.exports = {
   convertToGrid: convertToGrid,
   convertToGridInner: convertToGridInner,
   getStartingRow: getStartingRow,
   getStartingColumn: getStartingColumn,
   update: update,
-  updatePossibleRowColumn: updatePossibleRowColumn,
-  updatePossibleGrid: updatePossibleGrid
+  removePossibleRowColumnInGrid: removePossibleRowColumnInGrid,
+  removePossibleGridInRowColumn: removePossibleGridInRowColumn,
+  removePossibleRowColumnGrid: removePossibleRowColumnGrid
 };

@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const clone = require('lodash.clonedeep');
 const constants = require('./constants');
 const scorer = require('./scorer');
 const solver = require('./solver');
@@ -106,15 +107,6 @@ function putBackValue(list) {
     y: parseInt(value.substring(0, 1)),
     x: parseInt(value.substring(1))
   };
-}
-
-function clone(puzzle) {
-  const cloned = [];
-  for (var i = 0; i < constants.size; i++) {
-    cloned.push(Array.from(puzzle[i]));
-  }
-
-  return cloned;
 }
 
 module.exports = {
