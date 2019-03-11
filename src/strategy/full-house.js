@@ -4,22 +4,16 @@ const utils = require('../utils');
 
 function solve(puzzle, clues, operations, trail) {
   const possible = clues.possible;
-  var found = false;
 
   for (var i = 0; i < constants.size; i++) {
     if (possible.rows[i].size === 1) {
       const column = _.findIndex(puzzle[i], r => r === null);
       const answer = possible.rows[i].values().next().value;
       utils.update(puzzle, clues, i, column, answer);
+      clues.pseudoCount++;
       operations.fullHouse = operations.fullHouse + 1;
-      trail.push(`FH${i}${column}:${answer}`);
-      found = true;
-      break;
+      trail.push(`FH:R${i}${column}:${answer}`);
     }
-  }
-
-  if (found) {
-    return;
   }
 
   for (var j = 0; j < constants.size; j++) {
@@ -33,15 +27,10 @@ function solve(puzzle, clues, operations, trail) {
       }
       const answer = possible.columns[j].values().next().value;
       utils.update(puzzle, clues, row, j, answer);
+      clues.pseudoCount++;
       operations.fullHouse = operations.fullHouse + 1;
-      trail.push(`FH${row}${j}:${answer}`);
-      found = true;
-      break;
+      trail.push(`FH:C${row}${j}:${answer}`);
     }
-  }
-
-  if (found) {
-    return;
   }
 
   for (var k = 0; k < constants.size; k++) {
@@ -61,10 +50,9 @@ function solve(puzzle, clues, operations, trail) {
       }
       const answer = possible.grids[k].values().next().value;
       utils.update(puzzle, clues, row1, column1, answer);
+      clues.pseudoCount++;
       operations.fullHouse = operations.fullHouse + 1;
-      trail.push(`FH${row1}${column1}:${answer}`);
-      found = true;
-      break;
+      trail.push(`FH:G${row1}${column1}:${answer}`);
     }
   }
 }

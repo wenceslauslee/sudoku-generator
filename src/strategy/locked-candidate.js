@@ -3,24 +3,15 @@ const constants = require('../constants');
 const utils = require('../utils');
 
 function solve(puzzle, clues, operations, trail) {
+  solveInGrid(clues, operations, trail);
+  solveInRowColumn(clues, operations, trail);
+}
+
+// Find values in a grid that is confined to a row or column
+function solveInGrid(clues, operations, trail) {
   const possible = clues.possible;
   const remaining = clues.remaining;
 
-  var found = solveInGrid(possible, remaining, operations, trail);
-
-  if (found) {
-    clues.pseudoCount++;
-    return;
-  }
-
-  found = solveInRowColumn(possible, remaining, operations, trail);
-
-  if (found) {
-    clues.pseudoCount++;
-  }
-}
-
-function solveInGrid(possible, remaining, operations, trail) {
   for (var i = 0; i < constants.size; i++) {
     for (let s of possible.grids[i]) {
       const rowStart = utils.getStartingRow(i);
@@ -41,34 +32,40 @@ function solveInGrid(possible, remaining, operations, trail) {
       const rowEqual = _.every(row, r => r === row[0]);
       const colEqual = _.every(col, c => c === col[0]);
       if (rowEqual) {
-        const rowName = `LC${row[0]}xx:${s}`;
+        const rowName = `LC:G${row[0]}xx:${s}`;
         if (operations.lockedCandidateSet.has(rowName)) {
           continue;
         }
-        utils.updatePossibleRowColumn(remaining, row[0], null, i, s);
-        operations.lockedCandidate = operations.lockedCandidate + 1;
+        const performed = utils.removePossibleRowColumnInGrid(remaining, row[0], null, i, s);
+        if (performed) {
+          clues.pseudoCount++;
+          operations.lockedCandidate = operations.lockedCandidate + 1;
+          trail.push(rowName);
+        }
         operations.lockedCandidateSet.add(rowName);
-        trail.push(rowName);
-        return true;
       }
       if (colEqual) {
-        const colName = `LCx${col[0]}x:${s}`;
+        const colName = `LC:Gx${col[0]}x:${s}`;
         if (operations.lockedCandidateSet.has(colName)) {
           continue;
         }
-        utils.updatePossibleRowColumn(remaining, null, col[0], i, s);
-        operations.lockedCandidate = operations.lockedCandidate + 1;
+        const performed = utils.removePossibleRowColumnInGrid(remaining, null, col[0], i, s);
+        if (performed) {
+          clues.pseudoCount++;
+          operations.lockedCandidate = operations.lockedCandidate + 1;
+          trail.push(colName);
+        }
         operations.lockedCandidateSet.add(colName);
-        trail.push(colName);
-        return true;
       }
     }
   }
-
-  return false;
 }
 
-function solveInRowColumn(possible, remaining, operations, trail) {
+// Find values in a row/column that is confined to a grid
+function solveInRowColumn(clues, operations, trail) {
+  const possible = clues.possible;
+  const remaining = clues.remaining;
+
   for (var i1 = 0; i1 < constants.size; i1++) {
     for (let s1 of possible.rows[i1]) {
       const row = [];
@@ -85,15 +82,18 @@ function solveInRowColumn(possible, remaining, operations, trail) {
       }
 
       const grid1 = Math.floor(i1 / 3) * 3 + group1;
-      const gridName1 = `LCxx${grid1}:${s1}`;
+      const gridName1 = `LC:Rxx${grid1}:${s1}`;
       if (operations.lockedCandidateSet.has(gridName1)) {
         continue;
       }
-      utils.updatePossibleGrid(remaining, i1, null, grid1, s1);
-      operations.lockedCandidate = operations.lockedCandidate + 1;
+
+      const performed = utils.removePossibleGridInRowColumn(remaining, i1, null, grid1, s1);
+      if (performed) {
+        clues.pseudoCount++;
+        operations.lockedCandidate = operations.lockedCandidate + 1;
+        trail.push(gridName1);
+      }
       operations.lockedCandidateSet.add(gridName1);
-      trail.push(`LCxx${grid1}:${s1}`);
-      return true;
     }
   }
 
@@ -113,19 +113,20 @@ function solveInRowColumn(possible, remaining, operations, trail) {
       }
 
       const grid2 = Math.floor(i2 / 3) + group2 * 3;
-      const gridName2 = `LCxx${grid2}:${s2}`;
+      const gridName2 = `LC:Cxx${grid2}:${s2}`;
       if (operations.lockedCandidateSet.has(gridName2)) {
         continue;
       }
-      utils.updatePossibleGrid(remaining, null, i2, grid2, s2);
-      operations.lockedCandidate = operations.lockedCandidate + 1;
+
+      const performed = utils.removePossibleGridInRowColumn(remaining, null, i2, grid2, s2);
+      if (performed) {
+        clues.pseudoCount++;
+        operations.lockedCandidate = operations.lockedCandidate + 1;
+        trail.push(gridName2);
+      }
       operations.lockedCandidateSet.add(gridName2);
-      trail.push(`LCxx${grid2}:${s2}`);
-      return true;
     }
   }
-
-  return false;
 }
 
 function groupIntoGrids(list) {

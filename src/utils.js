@@ -53,13 +53,16 @@ function update(puzzle, clues, row, column, answer) {
 
 // Removes invalid answer from remaining in row/column outside specific grid
 function removePossibleRowColumnInGrid(remaining, row, column, grid, answer) {
+  var performed = false;
+
   if (row !== null) {
     const colStart = getStartingColumn(grid);
     const colEnd = colStart + 2;
 
     for (var i = 0; i < constants.size; i++) {
-      if (remaining[row][i] !== null && (i < colStart || i > colEnd)) {
+      if (remaining[row][i] !== null && (i < colStart || i > colEnd) && remaining[row][i].has(answer)) {
         remaining[row][i].delete(answer);
+        performed = true;
       }
     }
   }
@@ -69,29 +72,37 @@ function removePossibleRowColumnInGrid(remaining, row, column, grid, answer) {
     const rowEnd = rowStart + 2;
 
     for (var j = 0; j < constants.size; j++) {
-      if (remaining[j][column] !== null && (j < rowStart || j > rowEnd)) {
+      if (remaining[j][column] !== null && (j < rowStart || j > rowEnd) && remaining[j][column].has(answer)) {
         remaining[j][column].delete(answer);
+        performed = true;
       }
     }
   }
+
+  return performed;
 }
 
 // Removes invalid answer from remaining in grid outside specific row/column
 function removePossibleGridInRowColumn(remaining, row, column, grid, answer) {
+  var performed = false;
   const startingRow = getStartingRow(grid);
   const startingCol = getStartingColumn(grid);
+
   for (var i = startingRow; i < startingRow + 3; i++) {
     for (var j = startingCol; j < startingCol + 3; j++) {
       if (remaining[i][j] === null || i === row || j === column || !remaining[i][j].has(answer)) {
         continue;
       }
       remaining[i][j].delete(answer);
+      performed = true;
     }
   }
+
+  return performed;
 }
 
 // Removes invalid answer from remaining in row/column/grid
-function removePossibleRowColumnGrid(remaining, answerKeys) {
+function removePossibleFromBox(remaining, answerKeys) {
   const set = new Set(answerKeys);
   for (var r in remaining) {
     if (!set.has(r)) {
@@ -108,5 +119,5 @@ module.exports = {
   update: update,
   removePossibleRowColumnInGrid: removePossibleRowColumnInGrid,
   removePossibleGridInRowColumn: removePossibleGridInRowColumn,
-  removePossibleRowColumnGrid: removePossibleRowColumnGrid
+  removePossibleFromBox: removePossibleFromBox
 };

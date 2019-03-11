@@ -1,21 +1,21 @@
 const _ = require('underscore');
-const clone = require('lodash.clonedeep');
+const clone = require('lodash').clonedeep;
 const constants = require('../constants');
 const utils = require('../utils');
 
-const OFFSET = 2;
+const OFFSET = 1;
 
 function solve(puzzle, clues, operations, trail, subsetSize) {
   const remaining = clues.remaining;
 
   for (var i1 = 0; i1 < constants.size; i1++) {
-    const group = groupBy(remaining.rows[i1], subsetSize);
+    const group = groupBy(remaining[i1], subsetSize);
     const answer = getSubsets(group, subsetSize);
     if (answer != null) {
       for (var j1 in answer.values) {
-        utils.removePossibleRowColumnGrid(remaining.rows[j1], answer.keys);
+        utils.removePossibleFromBox(remaining[i1][j1], answer.keys);
       }
-      const operationName = formatOperationName(subsetSize, answer.keys);
+      const operationName = formatOperationName(subsetSize, 'R', answer.keys);
       operations.subset[subsetSize - OFFSET]++;
       operations.subsetSet[subsetSize - OFFSET].add(operationName);
       trail.push(operationName);
@@ -57,23 +57,22 @@ function getSubsetInner(group, current, level, subsetSize, subsetKeys, subsetVal
 }
 
 function groupBy(remaining, subsetSize) {
-  const values = {};
+  const values = [];
   for (var i = 0; i < constants.size; i++) {
+    values.push([]);
+  }
+  for (var j = 0; j < constants.size; j++) {
     if (remaining[i] === null) {
       continue;
     }
-    for (var s of remaining[i]) {
-      if (values[s] === null) {
-        values[s] = [i];
-      } else {
-        values[s].push(i);
-      }
+    for (var s of remaining[j]) {
+      values[s].push(i);
     }
   }
 
   const keys = [];
-  for (var g in values) {
-    if (values.g.length <= subsetSize) {
+  for (var k = 0; k < constants.size; k++) {
+    if (values[k].length !== 0 && values[k].length <= subsetSize) {
       keys.push(g);
     }
   }
@@ -84,10 +83,10 @@ function groupBy(remaining, subsetSize) {
   };
 }
 
-function formatOperationName(subsetSize, keys) {
+function formatOperationName(subsetSize, bound, keys) {
   const keysString = _.sortBy(keys, k => k).join('');
 
-  return `SS${subsetSize}:${keysString}`;
+  return `SS:${subsetSize}${bound}:${keysString}`;
 }
 
 module.exports = {
