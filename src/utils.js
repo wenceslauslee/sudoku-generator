@@ -1,11 +1,27 @@
 const constants = require('./constants');
 
+// Converts a row and column into grid
 function convertToGrid(row, column) {
   return Math.floor(row / 3) * 3 + Math.floor(column / 3);
 }
 
+// Converts a row and column into the inner position of a grid
 function convertToGridInner(row, column) {
   return (row % 3) * 3 + (column % 3);
+}
+
+// Converts an inner position of a grid to row and column
+// Inverse of convertToGridInner
+function convertFromGridInner(innerGrid, grid) {
+  const innerRow = Math.floor(innerGrid / 3);
+  const innerColumn = innerGrid % 3;
+  const row = Math.floor(grid / 3) * 3 + innerRow;
+  const column = (grid % 3) * 3 + innerColumn;
+
+  return {
+    row: row,
+    column: column
+  };
 }
 
 function getStartingRow(grid) {
@@ -104,7 +120,7 @@ function removePossibleGridInRowColumn(remaining, row, column, grid, answer) {
 // Removes invalid answer from remaining in row/column/grid
 function removePossibleFromBox(remaining, answerKeys) {
   const set = new Set(answerKeys);
-  for (var r in remaining) {
+  for (var r of remaining) {
     if (!set.has(r)) {
       remaining.delete(r);
     }
@@ -114,6 +130,7 @@ function removePossibleFromBox(remaining, answerKeys) {
 module.exports = {
   convertToGrid: convertToGrid,
   convertToGridInner: convertToGridInner,
+  convertFromGridInner: convertFromGridInner,
   getStartingRow: getStartingRow,
   getStartingColumn: getStartingColumn,
   update: update,
