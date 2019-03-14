@@ -1,10 +1,10 @@
 const _ = require('underscore');
-const clone = require('lodash.clonedeep');
+const clone = require('lodash').cloneDeep;
 const constants = require('./constants');
 const scorer = require('./scorer');
 const solver = require('./solver');
 
-function remove(puzzle, gridsToRemove, level) {
+function remove(puzzle, gridsToRemove, level, difficulty) {
   const original = clone(puzzle);
   for (var i = 0; i < constants.retryShuffleThreshold; i++) {
     const puzzleTemp = clone(original);
@@ -16,7 +16,7 @@ function remove(puzzle, gridsToRemove, level) {
       failCount: 0
     };
 
-    removeInner(puzzleTemp, level, metadata, original);
+    removeInner(puzzleTemp, level, difficulty, metadata, original);
 
     if (metadata.puzzle) {
       return {
@@ -27,7 +27,7 @@ function remove(puzzle, gridsToRemove, level) {
   }
 }
 
-function removeInner(puzzle, level, metadata, original) {
+function removeInner(puzzle, level, difficulty, metadata, original) {
   if (metadata.grids === metadata.gridsToRemove) {
     metadata.puzzle = clone(puzzle);
     return;
@@ -48,10 +48,10 @@ function removeInner(puzzle, level, metadata, original) {
       metadata.operations = result.operations;
 
       // Validate puzzle to make sure it adheres to difficulty
-      if (metadata.grids === metadata.gridsToRemove && !scorer.validate(result.operations, level)) {
+      if (metadata.grids === metadata.gridsToRemove && !scorer.validate(result.operations, difficulty)) {
         metadata.failCount += 1;
       } else {
-        removeInner(puzzle, level, metadata, original);
+        removeInner(puzzle, level, difficulty, metadata, original);
       }
     } else {
       metadata.failCount += 1;

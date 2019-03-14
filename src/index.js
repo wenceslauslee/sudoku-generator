@@ -3,17 +3,17 @@ const generator = require('./generator');
 const manipulator = require('./manipulator');
 
 const levels = {
-  one: {
+  simple: {
     grids: 33,
     intelligence: 2,
     filename: 'simple.txt'
   },
-  two: {
+  easy: {
     grids: 41,
     intelligence: 3,
     filename: 'easy.txt'
   },
-  three: {
+  medium: {
     grids: 51,
     intelligence: 4,
     filename: 'medium.txt'
@@ -22,7 +22,8 @@ const levels = {
 const folder = 'output';
 
 var totalPuzzles = 1;
-var level = levels[process.argv[2]];
+const difficulty = process.argv[2];
+const level = levels[process.argv[2]];
 if (!fs.existsSync(folder)) {
   fs.mkdirSync(folder);
 }
@@ -33,7 +34,7 @@ if (!fs.existsSync(filename)) {
 while (totalPuzzles <= 50) {
   const puzzle = generator.generate();
 
-  const result = manipulator.remove(puzzle, level.grids, level.intelligence);
+  const result = manipulator.remove(puzzle, level.grids, level.intelligence, difficulty);
 
   if (result) {
     console.log(`Found puzzle #${totalPuzzles}.`);

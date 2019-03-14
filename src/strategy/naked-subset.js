@@ -163,6 +163,26 @@ function checkIfNaked(group, subsetKeys, subsetValues, subsetSize) {
   return true;
 }
 
+function solveOne(puzzle, clues, operations, trail) {
+  return solve(puzzle, clues, operations, trail, 1);
+}
+
+function solveTwo(puzzle, clues, operations, trail) {
+  return solve(puzzle, clues, operations, trail, 2);
+}
+
+function solveThree(puzzle, clues, operations, trail) {
+  return solve(puzzle, clues, operations, trail, 3);
+}
+
+function solveFour(puzzle, clues, operations, trail) {
+  return solve(puzzle, clues, operations, trail, 4);
+}
+
 module.exports = {
-  solve: solve
+  solve: solve,
+  solveOne: solveOne,
+  solveTwo: solveTwo,
+  solveThree: solveThree,
+  solveFour: solveFour
 };

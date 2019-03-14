@@ -1,38 +1,37 @@
 const converter = require('./converter');
-const double = require('./strategy/double');
 const fullHouse = require('./strategy/full-house');
-const hiddenSingle = require('./strategy/hidden-single');
+const hiddenSubset = require('./strategy/hidden-subset');
 const lockedCandidate = require('./strategy/locked-candidate');
-const nakedSingle = require('./strategy/naked-single');
-// const util = require('util');
+const nakedSubset = require('./strategy/naked-subset');
 
 const STRATEGIES = [
-  fullHouse,
-  nakedSingle,
-  hiddenSingle,
-  lockedCandidate,
-  double
+  fullHouse.solve,
+  nakedSubset.solveOne,
+  hiddenSubset.solveOne,
+  lockedCandidate.solve,
+  nakedSubset.solveTwo,
+  hiddenSubset.solveTwo,
+  nakedSubset.solveThree,
+  hiddenSubset.solveThree,
+  nakedSubset.solveFour,
+  hiddenSubset.solveFour
 ];
 
 function solve(puzzle, level) {
   const clues = converter.convert(puzzle);
   const operations = {
     fullHouse: 0,
-    nakedSingle: 0,
-    hiddenSingle: 0,
     lockedCandidate: 0,
     lockedCandidateSet: new Set(),
     hiddenSubset: [0, 0, 0, 0],
     hiddenSubsetSet: [new Set(), new Set(), new Set(), new Set()],
-    nakedSubset: [0, 0, 0],
+    nakedSubset: [0, 0, 0, 0],
     nakedSubsetSet: [new Set(), new Set(), new Set(), new Set()]
   };
   const trail = [];
 
-  var oldCount = clues.count + 1;
-  var oldPseudoCount = clues.pseudoCount;
-  while ((clues.count !== 0 && clues.count !== oldCount) || clues.pseudoCount !== oldPseudoCount) {
-    oldCount = clues.count;
+  var oldPseudoCount = clues.pseudoCount - 1;
+  while (clues.count !== 0 && clues.pseudoCount !== oldPseudoCount) {
     oldPseudoCount = clues.pseudoCount;
     cycleThroughStrategies(puzzle, clues, operations, trail, level);
   }
@@ -45,11 +44,11 @@ function solve(puzzle, level) {
 }
 
 function cycleThroughStrategies(puzzle, clues, operations, trail, level) {
-  const currentCount = clues.count;
+  const currentCount = clues.pseudoCount;
 
   for (var i = 0; i < level; i++) {
-    STRATEGIES[i].solve(puzzle, clues, operations, trail);
-    if (clues.count !== currentCount) {
+    STRATEGIES[i](puzzle, clues, operations, trail);
+    if (clues.pseudoCount !== currentCount) {
       break;
     }
   }
