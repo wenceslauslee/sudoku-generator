@@ -22,8 +22,10 @@ function solve(puzzle, level) {
     hiddenSingle: 0,
     lockedCandidate: 0,
     lockedCandidateSet: new Set(),
-    hiddenSubset: [0, 0, 0],
-    hiddenSubsetSet: [new Set(), new Set(), new Set()]
+    hiddenSubset: [0, 0, 0, 0],
+    hiddenSubsetSet: [new Set(), new Set(), new Set(), new Set()],
+    nakedSubset: [0, 0, 0],
+    nakedSubsetSet: [new Set(), new Set(), new Set(), new Set()]
   };
   const trail = [];
 

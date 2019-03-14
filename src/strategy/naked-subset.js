@@ -10,18 +10,16 @@ function solve(puzzle, clues, operations, trail, subsetSize) {
 
   for (var i1 = 0; i1 < constants.size; i1++) {
     const group1 = groupBy(remaining[i1], subsetSize);
-    const answer1 = getSubsets(group1, subsetSize, operations.hiddenSubsetSet[subsetSize - OFFSET], `R${i1}`);
+    const answer1 = getSubsets(group1, subsetSize, operations.nakedSubsetSet[subsetSize - OFFSET], `R${i1}`);
 
     if (!_.isEmpty(answer1)) {
-      for (var j1 of answer1.values) {
-        if (subsetSize === 1) {
-          utils.update(puzzle, clues, i1, j1, answer1.keys[0]);
-        } else {
-          utils.removePossibleFromBox(remaining[i1][j1], answer1.keys);
-        }
+      if (subsetSize === 1) {
+        utils.update(puzzle, clues, i1, answer1.keys[0], answer1.values[0]);
+      } else {
+        utils.removePossibleFromOtherBoxes(remaining[i1], answer1.keys, answer1.values);
       }
       clues.pseudoCount++;
-      operations.hiddenSubset[subsetSize - OFFSET]++;
+      operations.nakedSubset[subsetSize - OFFSET]++;
       trail.push(answer1.operationName);
     }
   }
@@ -29,18 +27,16 @@ function solve(puzzle, clues, operations, trail, subsetSize) {
   for (var i2 = 0; i2 < constants.size; i2++) {
     const newRemaining2 = _.map(remaining, r => r[i2]);
     const group2 = groupBy(newRemaining2, subsetSize);
-    const answer2 = getSubsets(group2, subsetSize, operations.hiddenSubsetSet[subsetSize - OFFSET], `C${i2}`);
+    const answer2 = getSubsets(group2, subsetSize, operations.nakedSubsetSet[subsetSize - OFFSET], `C${i2}`);
 
     if (!_.isEmpty(answer2)) {
-      for (var j2 of answer2.values) {
-        if (subsetSize === 1) {
-          utils.update(puzzle, clues, j2, i2, answer2.keys[0]);
-        } else {
-          utils.removePossibleFromBox(remaining[j2][i2], answer2.keys);
-        }
+      if (subsetSize === 1) {
+        utils.update(puzzle, clues, answer2.keys[0], i2, answer2.values[0]);
+      } else {
+        utils.removePossibleFromOtherBoxes(newRemaining2, answer2.keys, answer2.values);
       }
       clues.pseudoCount++;
-      operations.hiddenSubset[subsetSize - OFFSET]++;
+      operations.nakedSubset[subsetSize - OFFSET]++;
       trail.push(answer2.operationName);
     }
   }
@@ -55,19 +51,17 @@ function solve(puzzle, clues, operations, trail, subsetSize) {
       }
     }
     const group3 = groupBy(newRemaining3, subsetSize);
-    const answer3 = getSubsets(group3, subsetSize, operations.hiddenSubsetSet[subsetSize - OFFSET], `G${i3}`);
+    const answer3 = getSubsets(group3, subsetSize, operations.nakedSubsetSet[subsetSize - OFFSET], `G${i3}`);
 
     if (!_.isEmpty(answer3)) {
-      for (var j3 of answer3.values) {
-        const position = utils.convertFromGridInner(j3, i3);
-        if (subsetSize === 1) {
-          utils.update(puzzle, clues, position.row, position.column, answer3.keys[0]);
-        } else {
-          utils.removePossibleFromBox(remaining[position.row][position.column], answer3.keys);
-        }
+      if (subsetSize === 1) {
+        const position = utils.convertFromGridInner(answer3.keys[0], i3);
+        utils.update(puzzle, clues, position.row, position.column, answer3.values[0]);
+      } else {
+        utils.removePossibleFromOtherBoxes(newRemaining3, answer3.keys, answer3.values);
       }
       clues.pseudoCount++;
-      operations.hiddenSubset[subsetSize - OFFSET]++;
+      operations.nakedSubset[subsetSize - OFFSET]++;
       trail.push(answer3.operationName);
     }
   }
@@ -117,7 +111,7 @@ function getSubsetInner(group, current, level, subsetSize, subsetKeys, subsetVal
 function groupBy(remaining, subsetSize) {
   const values = [];
   var totalCount = 0;
-  for (var i = 0; i < constants.size + 1; i++) {
+  for (var i = 0; i < constants.size; i++) {
     values.push([]);
   }
   for (var j = 0; j < constants.size; j++) {
@@ -125,13 +119,13 @@ function groupBy(remaining, subsetSize) {
       continue;
     }
     for (var s of remaining[j]) {
-      values[s].push(j);
+      values[j].push(s);
     }
     totalCount++;
   }
 
   const keys = [];
-  for (var k = 0; k < constants.size + 1; k++) {
+  for (var k = 0; k < constants.size; k++) {
     if (values[k].length !== 0 && values[k].length <= subsetSize) {
       keys.push(k);
     }
@@ -148,7 +142,7 @@ function formatOperationName(subsetSize, bound, keys, values) {
   const keysString = _.sortBy(keys, k => k).join('');
   const valuesString = _.sortBy(values, v => v).join('');
 
-  return `HS:${subsetSize}${bound}:${keysString}:${valuesString}`;
+  return `NS:${subsetSize}${bound}:${keysString}:${valuesString}`;
 }
 
 function checkIfNaked(group, subsetKeys, subsetValues, subsetSize) {
@@ -157,7 +151,7 @@ function checkIfNaked(group, subsetKeys, subsetValues, subsetSize) {
   }
 
   const set = new Set(subsetKeys);
-  for (var i = 1; i < constants.size + 1; i++) {
+  for (var i = 0; i < constants.size; i++) {
     if (set.has(i)) {
       continue;
     }

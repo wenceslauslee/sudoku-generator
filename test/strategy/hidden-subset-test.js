@@ -24,16 +24,16 @@ describe('hiddenSubset', () => {
       };
       const trail = [];
       hiddenSubset.solve(puzzle, clues, operations, trail, 1);
-      const expectedTrail = [ 'SS:1R2:6:3' ];
+      const expectedTrail = [ 'HS:1R2:6:3' ];
 
       assert.strictEqual(puzzle[2][3], 6);
       assert.isNotOk(clues.possible.rows[2].has(6));
       assert.isNotOk(clues.possible.columns[3].has(6));
       assert.isNotOk(clues.possible.grids[1].has(6));
       assert.isNull(clues.remaining[2][3]);
-      assert.isAtMost(clues.count, 48);
-      assert.isAtLeast(clues.pseudoCount, 1);
-      assert.isAtLeast(operations.hiddenSubset[0], 1);
+      assert.strictEqual(clues.count, 48);
+      assert.strictEqual(clues.pseudoCount, 1);
+      assert.strictEqual(operations.hiddenSubset[0], 1);
       assert.isOk(operations.hiddenSubsetSet[0].has(expectedTrail[0]));
       assert.deepStrictEqual(trail, expectedTrail);
     });
@@ -56,12 +56,12 @@ describe('hiddenSubset', () => {
       };
       const trail = [];
       hiddenSubset.solve(puzzle, clues, operations, trail, 2);
-      const expectedTrail = [ 'SS:2C8:19:46' ];
+      const expectedTrail = [ 'HS:2C8:19:46' ];
 
       assert.isNotOk(clues.remaining[4][8].has(6));
-      assert.isAtMost(clues.count, 27);
-      assert.isAtLeast(clues.pseudoCount, 1);
-      assert.isAtLeast(operations.hiddenSubset[1], 1);
+      assert.strictEqual(clues.count, 27);
+      assert.strictEqual(clues.pseudoCount, 1);
+      assert.strictEqual(operations.hiddenSubset[1], 1);
       assert.isOk(operations.hiddenSubsetSet[1].has(expectedTrail[0]));
       assert.deepStrictEqual(trail, expectedTrail);
     });
@@ -84,13 +84,13 @@ describe('hiddenSubset', () => {
       };
       const trail = [];
       hiddenSubset.solve(puzzle, clues, operations, trail, 3);
-      const expectedTrail = [ 'SS:3G6:245:478' ];
+      const expectedTrail = [ 'HS:3G6:245:478' ];
 
       assert.isNotOk(clues.remaining[8][1].has(1));
       assert.isNotOk(clues.remaining[8][2].has(6));
-      assert.isAtMost(clues.count, 35);
-      assert.isAtLeast(clues.pseudoCount, 1);
-      assert.isAtLeast(operations.hiddenSubset[2], 1);
+      assert.strictEqual(clues.count, 35);
+      assert.strictEqual(clues.pseudoCount, 1);
+      assert.strictEqual(operations.hiddenSubset[2], 1);
       assert.isOk(operations.hiddenSubsetSet[2].has(expectedTrail[0]));
       assert.deepStrictEqual(trail, expectedTrail);
     });
@@ -113,13 +113,13 @@ describe('hiddenSubset', () => {
       };
       const trail = [];
       hiddenSubset.solve(puzzle, clues, operations, trail, 4);
-      const expectedTrail = [ 'SS:4G7:2458:1245' ];
+      const expectedTrail = [ 'HS:4G7:2458:1245' ];
 
       assert.isOk(testUtils.checkSetDoesNotExist(clues.remaining[6][4], new Set([ 3, 6 ])));
       assert.isNotOk(clues.remaining[7][4].has(6));
-      assert.isAtMost(clues.count, 49);
-      assert.isAtLeast(clues.pseudoCount, 1);
-      assert.isAtLeast(operations.hiddenSubset[3], 1);
+      assert.strictEqual(clues.count, 30);
+      assert.strictEqual(clues.pseudoCount, 1);
+      assert.strictEqual(operations.hiddenSubset[3], 1);
       assert.isOk(operations.hiddenSubsetSet[3].has(expectedTrail[0]));
       assert.deepStrictEqual(trail, expectedTrail);
     });

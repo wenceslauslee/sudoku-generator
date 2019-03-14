@@ -127,6 +127,21 @@ function removePossibleFromBox(remaining, answerKeys) {
   }
 }
 
+// Removes invalid answer from other remaining boxes in row/column/grid
+function removePossibleFromOtherBoxes(remaining, answerKeys, answerValues) {
+  const keySet = new Set(answerKeys);
+  for (var i = 0; i < constants.size; i++) {
+    if (remaining[i] === null || keySet.has(i)) {
+      continue;
+    }
+    for (var v of answerValues) {
+      if (remaining[i].has(v)) {
+        remaining[i].delete(v);
+      }
+    }
+  }
+}
+
 module.exports = {
   convertToGrid: convertToGrid,
   convertToGridInner: convertToGridInner,
@@ -136,5 +151,6 @@ module.exports = {
   update: update,
   removePossibleRowColumnInGrid: removePossibleRowColumnInGrid,
   removePossibleGridInRowColumn: removePossibleGridInRowColumn,
-  removePossibleFromBox: removePossibleFromBox
+  removePossibleFromBox: removePossibleFromBox,
+  removePossibleFromOtherBoxes: removePossibleFromOtherBoxes
 };
