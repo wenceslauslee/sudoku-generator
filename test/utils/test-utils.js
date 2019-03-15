@@ -28,6 +28,17 @@ function convertStringToPuzzle(puzzleString) {
   return puzzle;
 }
 
+// Check if any value in testSet exists in remaining
+function checkSetDoesNotExist(remaining, testSet) {
+  for (var s of testSet) {
+    if (remaining.has(s)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 // Generates a default puzzle for testing
 // https://dingo.sbs.arizona.edu/~sandiway/sudoku/examples.html (Second example)
 function getDefaultPuzzle() {
@@ -44,5 +55,6 @@ function getDefaultPuzzle() {
 
 module.exports = {
   convertStringToPuzzle: convertStringToPuzzle,
+  checkSetDoesNotExist: checkSetDoesNotExist,
   getDefaultPuzzle: getDefaultPuzzle
 };

@@ -1,11 +1,15 @@
-function validate(operations, level) {
-  if (level === 2) {
-    return operations.nakedSingle >= 20;
-  } else if (level === 3) {
-    return operations.hiddenSingle > 10 &&
-      operations.nakedSingle > 20;
-  } else if (level === 4) {
-    return operations.lockedCandidate >= 5;
+function validate(operations, difficulty) {
+  if (difficulty === 'simple') {
+    return operations.fullHouse >= 15 && operations.nakedSubset[0] >= 20;
+  } else if (difficulty === 'easy') {
+    return operations.hiddenSubset[0] >= 10 &&
+      operations.nakedSubset[0] >= 25;
+  } else if (difficulty === 'medium') {
+    return operations.hiddenSubset[0] + operations.nakedSubset[0] >= 42;
+  } else if (difficulty === 'hard') {
+    return operations.fullHouse <= 10;
+  } else if (difficulty === 'expert') {
+    return operations.fullHouse <= 10;
   }
 
   return false;

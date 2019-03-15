@@ -3,26 +3,38 @@ const generator = require('./generator');
 const manipulator = require('./manipulator');
 
 const levels = {
-  one: {
+  simple: {
     grids: 33,
     intelligence: 2,
     filename: 'simple.txt'
   },
-  two: {
+  easy: {
     grids: 41,
     intelligence: 3,
     filename: 'easy.txt'
   },
-  three: {
+  medium: {
     grids: 51,
     intelligence: 4,
     filename: 'medium.txt'
+  },
+  hard: {
+    grids: 54,
+    intelligence: 10,
+    filename: 'hard.txt'
+  },
+  expert: {
+    grids: 55,
+    intelligence: 10,
+    filename: 'expert.txt'
   }
 };
 const folder = 'output';
 
 var totalPuzzles = 1;
-var level = levels[process.argv[2]];
+var successfulPuzzles = 1;
+const difficulty = process.argv[2];
+const level = levels[process.argv[2]];
 if (!fs.existsSync(folder)) {
   fs.mkdirSync(folder);
 }
@@ -30,18 +42,19 @@ const filename = `${folder}/${level.filename}`;
 if (!fs.existsSync(filename)) {
   fs.openSync(filename, 'w');
 }
-while (totalPuzzles <= 50) {
+while (successfulPuzzles <= 5) {
   const puzzle = generator.generate();
 
-  const result = manipulator.remove(puzzle, level.grids, level.intelligence);
+  const result = manipulator.remove(puzzle, level.grids, level.intelligence, difficulty);
 
   if (result) {
-    console.log(`Found puzzle #${totalPuzzles}.`);
-    totalPuzzles++;
+    console.log(`Found puzzle #${successfulPuzzles}. Attempt #${totalPuzzles}`);
     printToFile(result.puzzle, filename);
+    successfulPuzzles++;
   } else {
-    console.log(`Failed puzzle attempt #${totalPuzzles}.`);
+    console.log(`Failed puzzle #${successfulPuzzles}. Attempt #${totalPuzzles}.`);
   }
+  totalPuzzles++;
 }
 
 function printToFile(puzzle, filename) {

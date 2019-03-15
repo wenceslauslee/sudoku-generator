@@ -1,4 +1,5 @@
-const assert = require('assert');
+const chai = require('chai');
+const assert = chai.assert;
 const converter = require('../src/converter');
 const testUtils = require('./utils/test-utils');
 
