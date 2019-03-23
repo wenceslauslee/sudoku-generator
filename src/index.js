@@ -1,4 +1,4 @@
-const fs = require('fs');
+const db = require('./db');
 const generator = require('./generator');
 const manipulator = require('./manipulator');
 
@@ -29,35 +29,68 @@ const levels = {
     filename: 'expert.txt'
   }
 };
-const folder = 'output';
 
-var totalPuzzles = 1;
-var successfulPuzzles = 1;
 const difficulty = process.argv[2];
 const level = levels[process.argv[2]];
-if (!fs.existsSync(folder)) {
+/* if (!fs.existsSync(folder)) {
   fs.mkdirSync(folder);
 }
 const filename = `${folder}/${level.filename}`;
 if (!fs.existsSync(filename)) {
   fs.openSync(filename, 'w');
-}
-while (successfulPuzzles <= 5) {
-  const puzzle = generator.generate();
+} */
 
-  const result = manipulator.remove(puzzle, level.grids, level.intelligence, difficulty);
+var totalPuzzles = 1;
+var successfulPuzzles = 1;
 
-  if (result) {
-    console.log(`Found puzzle #${successfulPuzzles}. Attempt #${totalPuzzles}`);
-    printToFile(result.puzzle, filename);
-    successfulPuzzles++;
-  } else {
-    console.log(`Failed puzzle #${successfulPuzzles}. Attempt #${totalPuzzles}.`);
+db.getCount(difficulty)
+  .then(currentCount => {
+    const puzzlesToStore = [];
+
+    while (successfulPuzzles <= 5) {
+      const puzzle = generator.generate();
+      const result = manipulator.remove(puzzle, level.grids, level.intelligence, difficulty);
+
+      if (result) {
+        console.log(`Found puzzle #${successfulPuzzles}. Attempt #${totalPuzzles}`);
+        puzzlesToStore.push(convertToPuzzleString(result.puzzle));
+        // printToFile(result.puzzle, filename);
+        successfulPuzzles++;
+      } else {
+        console.log(`Failed puzzle #${successfulPuzzles}. Attempt #${totalPuzzles}.`);
+      }
+      totalPuzzles++;
+    }
+
+    return db.createPuzzles(difficulty, currentCount, puzzlesToStore)
+      .then(() => {
+        return db.updatePuzzleData(difficulty, successfulPuzzles - 1);
+      });
+  })
+  .catch(err => {
+    return db.updatePuzzleData(difficulty, successfulPuzzles - 1)
+      .then(() => {
+        console.log(err);
+        throw err;
+      });
+  });
+
+function convertToPuzzleString(puzzle) {
+  const values = [];
+  for (var i = 0; i < 9; i++) {
+    for (var j = 0; j < 9; j++) {
+      if (puzzle[i][j] != null) {
+        values.push(`${puzzle[i][j]}`);
+      } else {
+        values.push('_');
+      }
+    }
   }
-  totalPuzzles++;
+
+  return values.join('');
 }
 
-function printToFile(puzzle, filename) {
+/* function printToFile(puzzle, filename) {
   const rows = [];
   for (var i = 0; i < 9; i++) {
     const row = [];
@@ -72,4 +105,4 @@ function printToFile(puzzle, filename) {
   }
   rows.push('---------\n');
   fs.appendFileSync(filename, rows.join(''));
-}
+} */

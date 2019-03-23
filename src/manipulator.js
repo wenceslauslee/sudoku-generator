@@ -19,7 +19,7 @@ function remove(puzzle, gridsToRemove, level, difficulty) {
     removeInner(puzzleTemp, level, difficulty, metadata, original);
 
     if (metadata.puzzle) {
-      printOperations(metadata.operations);
+      // printOperations(metadata.operations);
       return {
         puzzle: metadata.puzzle,
         operations: metadata.operations
@@ -51,7 +51,7 @@ function removeInner(puzzle, level, difficulty, metadata, original) {
       // Validate puzzle to make sure it adheres to difficulty
       if (metadata.grids === metadata.gridsToRemove && !scorer.validate(result.operations, difficulty)) {
         metadata.failCount += 1;
-        printOperations(metadata.operations);
+        // printOperations(metadata.operations);
       } else {
         removeInner(puzzle, level, difficulty, metadata, original);
       }
@@ -111,12 +111,12 @@ function putBackValue(list) {
   };
 }
 
-function printOperations(operations) {
+/* function printOperations(operations) {
   console.log(`FH: ${operations.fullHouse}`);
   console.log(`NS: ${operations.nakedSubset}`);
   console.log(`HS: ${operations.hiddenSubset}`);
   console.log(`LC: ${operations.lockedCandidate}`);
-}
+} */
 
 module.exports = {
   remove: remove
