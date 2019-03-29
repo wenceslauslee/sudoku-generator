@@ -8,7 +8,7 @@ AWS.config.update({
 const docClient = new AWS.DynamoDB.DocumentClient();
 const puzzleDataTable = 'sudoku-puzzle-data';
 const puzzleTableMap = {
-  'simple': 'sudoku-puzzle-simple',
+  'trivial': 'sudoku-puzzle-trivial',
   'easy': 'sudoku-puzzle-easy',
   'medium': 'sudoku-puzzle-medium'
 };
@@ -36,7 +36,7 @@ function getCount(difficulty) {
     });
 }
 
-function createPuzzles(difficulty, originalCount, puzzleStrings) {
+function createPuzzles(difficulty, originalCount, puzzleStrings, solvedPuzzleStrings) {
   const items = [];
 
   for (var i = 0; i < puzzleStrings.length; i++) {
@@ -45,6 +45,7 @@ function createPuzzles(difficulty, originalCount, puzzleStrings) {
         'Item': {
           'id': originalCount + i + 1,
           'puzzleString': puzzleStrings[i],
+          'solvedPuzzleString': solvedPuzzleStrings[i],
           'useCount': 0
         }
       }

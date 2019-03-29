@@ -3,10 +3,10 @@ const generator = require('./generator');
 const manipulator = require('./manipulator');
 
 const levels = {
-  simple: {
+  trivial: {
     grids: 33,
     intelligence: 2,
-    filename: 'simple.txt'
+    filename: 'trivial.txt'
   },
   easy: {
     grids: 41,
@@ -45,6 +45,7 @@ var successfulPuzzles = 1;
 
 db.getCount(difficulty)
   .then(currentCount => {
+    const solvedPuzzlesToStore = [];
     const puzzlesToStore = [];
 
     while (successfulPuzzles <= 5) {
@@ -53,6 +54,7 @@ db.getCount(difficulty)
 
       if (result) {
         console.log(`Found puzzle #${successfulPuzzles}. Attempt #${totalPuzzles}`);
+        solvedPuzzlesToStore.push(convertToPuzzleString(puzzle));
         puzzlesToStore.push(convertToPuzzleString(result.puzzle));
         // printToFile(result.puzzle, filename);
         successfulPuzzles++;
@@ -62,7 +64,7 @@ db.getCount(difficulty)
       totalPuzzles++;
     }
 
-    return db.createPuzzles(difficulty, currentCount, puzzlesToStore)
+    return db.createPuzzles(difficulty, currentCount, puzzlesToStore, solvedPuzzlesToStore)
       .then(() => {
         return db.updatePuzzleData(difficulty, successfulPuzzles - 1);
       });

@@ -1,5 +1,5 @@
 function validate(operations, difficulty) {
-  if (difficulty === 'simple') {
+  if (difficulty === 'trivial') {
     return operations.fullHouse >= 15 && operations.nakedSubset[0] >= 20;
   } else if (difficulty === 'easy') {
     return operations.hiddenSubset[0] >= 10 &&
